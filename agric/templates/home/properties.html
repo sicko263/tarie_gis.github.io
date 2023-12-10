@@ -1,0 +1,79 @@
+{% load widget_tweaks %}
+
+
+<div class="card custom-card">
+    <div class="card-header border-bottom">
+        <h3 class="card-title"> Farms List ( {{ count }}) </h3>
+        <div class="ms-auto">
+            <div class="btn-group p-0 ms-auto">
+                <button id="close_list_panel" class="btn btn-danger-light btn-sm" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive" style="max-height: 35vh; overflow-y: auto;">
+            <table class="table  border text-nowrap text-md-nowrap">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col"> Province </th>
+                        <th scope="col"> District </th>
+                        <th scope="col"> Area_km2 </th>
+                        <th scope="col"> Area (Ha) </th>
+                        <th scope="col"> Status </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for property in property_list|slice:':250' %}
+                    <tr>
+                        <th scope="row"> {{ forloop.counter }} </th>
+                        <td> {{ property.province}} </td>
+                        <td> {{ property.district }}</td>
+                        <td> {{ property.area_km2 }} </td>
+                        <td> {{ property.area_ha }}</td>
+                        <td> {{ property.status }} </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    
+    var the_count = 2;
+
+   
+
+</script>
+<script>
+    closeButton = document.getElementById('close_list_panel')
+    closeButton.addEventListener('click',function(e){
+        $('#property_search_results_2').empty();
+    });
+    
+    
+</script>
+<script>
+   $(document).ready(function() {
+        var the_count = 2;
+
+        property_source.clear();
+        property_source.addFeatures((new ol.format.GeoJSON()).readFeatures({{ geojson_data|safe }}));
+        var layerExtent = property_source.getExtent();
+        var bufferedExtent = new ol.extent.buffer(layerExtent, 0.002);
+        map.getView().fit(bufferedExtent, {
+            duration: 2000
+        });
+
+
+        $('#close-list-panel').click(function() {
+            $('#property_search_results_2').html('');
+        });
+
+    });
+    
+   
+</script>

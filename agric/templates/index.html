@@ -1,0 +1,2357 @@
+{% extends 'components/mapbase.html' %} {% load user_tags %} {% block content %}
+
+{% load static %}
+<title> LIMS </title>
+<!-- shape to geojson -->
+
+<link rel="stylesheet" href="{% static 'ol-ext/dist/ol-ext.css' %}">
+<link rel="stylesheet" href="{% static 'ol/4.6.5/ol.css' %}">
+<script src="{% static 'ol/4.6.5/ol-debug.js' %}"></script>
+<script src="{% static 'ol-ext/dist/ol-ext.js' %} "></script>
+<script src="{% static 'assets/js/jquery.min.js'%}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsts@2.3.0/dist/jsts.min.js"></script>
+
+<style>
+    .ind{
+        border: 1px solid #d1d1d1;
+        color: #1a1a1a;
+        width: 6rem;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    .my_planning_form{
+        
+        width: 20rem;
+       
+        position: absolute;
+        height: 25rem;
+        overflow-y: scroll;
+        margin-right: 10rem;
+        
+        bottom: 0rem;
+        transform: translateX(48rem);
+       
+       
+    }
+    #planning_table{
+        height: 23rem;
+        overflow-y: scroll;
+    }
+    .popUP{
+        display: none;
+    }
+    .attQueryDiv{
+        z-index: 100;
+        position: absolute;
+        margin: 120px auto auto 70px;
+        display: none;
+        width: 250px;
+        background-color: rgba(255, 255, 255, 0.9);
+        font-family: inherit;
+        font-size: 1em;
+        line-height: 1.45;
+        border-radius: 2px;
+        border-radius: 1px solid #d1d1d1;
+        box-shadow: 0px 0px 15px rgba(252, 213, 213, 0.5);
+    }
+    .attQryRun{
+        color: #fff;
+        background-color: green;
+        border-radius: 3px;
+        border: 1px solid darkgreen;
+        height: 35px;
+        width: 50px;
+        margin: 10px;
+    }
+    #headerDiv{
+        background-color: midnightblue;
+        height: 35px;
+    }
+    #headerDiv label{
+        color: #fff;
+    }
+    .attQueryDiv select {
+        width: 225px;
+        height: 35px;
+        border: 1px solid lightgray;
+        border-radius: 3px;
+        margin: 0px auto 0px 10px;
+    }
+
+    .attQueryDiv label {
+        color: grey;
+        margin: 10px 10px 0px 10px;
+    }
+    .the-map {
+        width: 100%;
+        height: 114vh;
+        margin: auto;
+    }
+    
+    .the-property-data {
+        /* max-height: 20vh; */
+        border: 1px solid var(--primary-bg-color) !important;
+        width: auto;
+        /* background-color: var(--primary-bg-color); */
+    }
+    
+    .the-map-products {
+        /* background-color: var(--primary-bg-color) !important; */
+        background-color: #8fbd5654 !important;
+        border: 1px solid var(--primary-bg-color);
+    }
+    
+    .the-map-product-preview {
+        max-height: 20vh;
+        border: 1px solid var(--primary-bg-color) !important;
+        width: auto;
+        /* background-color: var(--primary-bg-color); */
+    }
+    
+    .grid-map-search {
+        z-index: 2;
+        position: absolute;
+        margin: 18px 0px 0px 18px;
+        min-width: 25vw;
+    }
+    
+    .grid-map-controls {
+        z-index: 2;
+        position: absolute;
+        display: inline-grid;
+        margin: 60px 0px 0px 18px;
+    }
+    
+    .grid-map-switch {
+        z-index: 2;
+        position: absolute;
+        right: 10px;
+        width: 20%;
+        margin: 18px 18px 0px 0px;
+        background-color: #dae9c7 !important;
+        border: 1px solid var(--primary-bg-color) !important;
+    }
+    
+    .btn-primary {
+        color: #fff !important;
+        background-color: var(--techsys-bg-color) !important;
+        border-color: var(--techsys-bg-color) !important;
+    }
+    
+    .ol-layerswitcher .layerswitcher-opacity:before {
+        content: "";
+        width: 100%;
+        height: 3px;
+        background: var(--techsys-bg-color);
+        position: absolute;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        border: 1px solid var(--techsys-bg-color);
+        box-sizing: border-box;
+    }
+    
+    .ol-layerswitcher .layerswitcher-opacity .layerswitcher-opacity-cursor {
+        width: auto;
+        transform: translateY(-50%);
+        height: 3px;
+        right: 0;
+        background: #666;
+        border-radius: 0;
+    }
+    
+    .ol-touch .ol-layerswitcher .layerswitcher-opacity .layerswitcher-opacity-cursor,
+    .ol-layerswitcher .layerswitcher-opacity .layerswitcher-opacity-cursor:before {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        width: 6px;
+        height: 16px;
+        left: -1px;
+        border-radius: 0;
+        background: var(--techsys-bg-color);
+    }
+    
+    .ol-layerswitcher .layerswitcher-opacity-label {
+        display: block;
+        right: 20%;
+        bottom: 70%;
+        font-size: 0.6em;
+        user-select: none;
+        -webkit-transform: translateX(50%);
+        transform: translateX(50%);
+    }
+    
+    .ol-layerswitcher .layerup {
+        width: 2em;
+        background: none;
+        position: absolute;
+        right: 0;
+    }
+    
+    .ol-layerswitcher .layerup:after {
+        content: none;
+    }
+    
+    .ol-layerswitcher .layerup:before {
+        color: var(--techsys-bg-color);
+        content: "\F0C9";
+        font-family: FontAwesome;
+        border: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 1em;
+        left: .5em;
+    }
+    
+    .ol-layerswitcher [type=checkbox]+label:before,
+    .ol-layerswitcher [type=radio]+label:before {
+        content: '';
+        border: 2px solid #ccc;
+        background-color: transparent;
+    }
+    
+    .ol-layerswitcher [type=checkbox]:checked+label:before,
+    .ol-layerswitcher [type=radio]:checked+label:before {
+        background: var(--techsys-bg-color);
+        border-color: var(--techsys-bg-color);
+    }
+    
+    .ol-layerswitcher [type=checkbox]:checked+label:after {
+        content: "\2713";
+        color: #fff !important;
+        position: absolute;
+        top: -.15em;
+        left: 0.25em;
+        cursor: pointer;
+        font-weight: 900;
+        text-shadow: 1px 1px #fff;
+        font-size: 1.2em;
+        transform: none;
+        border: 0;
+        box-shadow: unset;
+    }
+    
+    .ol-layerswitcher [type="radio"]:checked+label:after {
+        content: none;
+    }
+    
+    .ol-control.ol-layerswitcher {
+        right: 0.5rem;
+        top: 0.5rem;
+        z-index: 1;
+    }
+    
+    .ol-layerswitcher button,
+    .ol-layerswitcher button:focus,
+    .ol-layerswitcher button:hover {
+        background: var(--techsys-bg-color);
+        border: 0;
+        user-select: none;
+        outline: none;
+    }
+    
+    .ol-layerswitcher button:before {
+        background: var(--techsys-bg-color);
+        -webkit-box-shadow: 0.1em 0.1em #fff;
+        box-shadow: 0.1em 0.1em #fff;
+    }
+    
+    .ol-layerswitcher button:after {
+        background: #fff;
+        background-image: none;
+    }
+    
+    .ol-layerswitcher .ol-layer-group {
+        margin-top: 1em;
+    }
+    
+    .ol-layerswitcher .ol-layer-group>.ol-layerswitcher-buttons .layerInfo {
+        display: none;
+    }
+    
+    .ol-layerswitcher .expend-layers:before,
+    .ol-layerswitcher .collapse-layers:before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        margin-top: -2px;
+        height: 4px;
+        width: 100%;
+        background: #5dd18d;
+    }
+    
+    .ol-layerswitcher .expend-layers,
+    .ol-layerswitcher .collapse-layers {
+        top: -1em;
+    }
+    
+    .ol-layerswitcher .expend-layers:before,
+    .ol-layerswitcher .expend-layers:after,
+    .ol-layerswitcher .collapse-layers:before,
+    .ol-layerswitcher .collapse-layers:after {
+        background: var(--techsys-bg-color);
+    }
+    
+    .ol-layerswitcher .panel ul {
+        overflow: visible;
+    }
+    
+    .ol-layerswitcher .layerInfo {
+        right: -.5em;
+        background: var(--techsys-bg-color);
+    }
+    
+    .ol-control.ol-layerswitcher .ol-switchertopdiv,
+    .ol-control.ol-layerswitcher .ol-switcherbottomdiv {
+        display: none !important;
+    }
+    
+    .the-grid-list {
+        max-height: calc(80vh - 14.5vh - 60px);
+        border: 1px solid var(--primary-bg-color) !important;
+        width: auto;
+        overflow-y: auto;
+    }
+    
+
+
+
+    
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    #map_search_type,
+    #map_search_value {
+        min-width: 200px;
+    }
+    
+    .ol-popupfeature>h1 {
+        display: inline-block !important;
+        font-size: 18px !important;
+        padding-right: 4rem !important;
+    }
+    
+    .ol-popup>div {
+        /* border-radius: 0px !important; */
+        padding: 0.35rem !important;
+        border: 0px !important;
+    }
+    
+    #popup-panel {
+        max-width: fit-content;
+    }
+    
+    .the-popup-content {
+        width: fit-content;
+    }
+    
+    #popup-content {
+        max-height: 45vh;
+        overflow-y: auto;
+        width: fit-content;
+        background-color: #fff;
+        font-size: 12px;
+        /* font-weight: bold !important; */
+        /* font-family: cursive; */
+    }
+    
+    #popup-title {
+        font-size: 20px;
+        color: black;
+    }
+    
+    .displayNone {
+        display: none !important;
+    }
+    .first_indicator{
+        background-color: red;
+        display: flex;
+       
+    }
+    
+</style>
+
+
+
+
+<div class="row m-0 p-0">
+
+    <div class="row col-md-9 col-sm-12 col-lg-9 col-xl-9">
+       
+            <div >
+                <div class="attQueryDiv" id="attQueryDiv">
+                    <div class="headerDiv" id="headerDiv">
+                        <label for=""> Select By Attribute</label>
+            
+                    </div><br>
+                    <form  enctype="multipart/form-data" id="fm-street-address" action="" method="POST"> {% csrf_token %}
+                        <div class="m-2">
+                            <label  class="form-label text text-dark" for="name-wiz1"> Name </label>
+                            {{ form.name }}
+                        </div>
+                        <div class="m-2">
+                            <label  class="form-label text text-dark" for="name-wiz1"> Province </label> 
+                            {{form.province}}
+                        </div>
+                        <div class="m-2">
+                            <label  class="form-label text text-dark" for="name-wiz1"> District </label> 
+                            {{form.district}}
+                        </div>
+                        <div class="m-2">
+                            <label  class="form-label text text-dark" for="name-wiz1"> Status</label> 
+                            {{form.status}}
+                        </div>
+                        <button type="submit" id="attQryRun" class="attQryRun">Run</button>
+                        
+                        <button id="closeQry" class="btn btn-danger-light btn-sm" type="button">Close</button>
+                        
+                        
+                    </form>
+            
+                    
+            
+                
+            
+                </div>
+                <div id="id_geom_map" class="the-map">
+
+                    <!-- Start: Search input -->
+                    
+                    <!-- End: Search input -->
+
+                    <!-- Start: Map Controls -->
+                    
+
+                    <div class="btn-group-verticalx grid-map-controls">
+                        <button id="customZoomIn" title="Zoom In" type="button" class="btn btn-icon  btn-primary m-1"><i class="fe fe-plus"></i></button>
+                        <button id="customZoomOut" title="Zoom Out" type="button" class="btn btn-icon  btn-primary m-1"><i class="fe fe-minus"></i></button>
+                        <button type="button"  id="pan-map" class="btn btn-icon  btn-primary m-1"><i class="ti-hand-open" data-bs-toggle="tooltip" title="Drag map"></i></button>
+                        <button id="switcher-btn" title="Map Layers" type="button" class="btn btn-icon  btn-primary m-1">
+                            <i class="fe fe-layers"></i>
+                        </button>
+
+                        <button id="dragZoomBtn" title="Drag Zoom" type="button" class="btn btn-icon  btn-primary m-1">
+                            <i class="fe fe-crop" data-bs-toggle="tooltip"></i>
+                        </button> 
+
+                        <button id="identifyFeatureBtn" title="Identify Features" type="button" class="btn btn-icon  btn-primary m-1">
+                            <i class="fe fe-info"></i>
+                        </button>
+
+                        
+
+                        
+
+                        
+                        <button id="selectAttr" title="Select By Attribute" type="button" class="btn btn-icon  btn-primary m-1">
+                            <i class="fe fe-slack" data-bs-toggle="tooltip" title="Select"></i>
+                        </button>
+                        
+
+                        <!-- <div class="dropright btn-group">
+                            <button type="button" title="Measurements" class="btn btn-icon btn-primary dropdown-toggle m-1" data-bs-toggle="dropdown">
+                                <i class="fe fe-command"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <form>
+                                    <label for="type">Measurement type &nbsp;</label>
+                                    <select id="type">
+                                      <option value="LineString">Length (LineString)</option>
+                                      <option value="Polygon">Area (Polygon)</option>
+                                    </select>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="segments">Show segment lengths:&nbsp;</label>
+                                    <input type="checkbox" id="segments" checked />
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="clear">Clear previous measure:&nbsp;</label>
+                                    <input type="checkbox" id="clear" checked />
+                                  </form>
+
+
+                            </div>
+                        </div> -->
+                        
+                       
+                    </div>
+                    <!-- End: Map Controls -->
+
+
+
+                    <!-- Start: Map Controls -->
+                    <div class="card grid-map-switch" style="display: none;">
+                        <div class="card-header mgis-form-card-header pb-1 pt-2">
+                            <h5 class="card-title my-0 mgis-card-title"> MAP LAYERS </h5>
+                        </div>
+                        <div id="map_layers_panel" class="card-body px-3 py-2">
+                            <!-- The panel here ! -->
+
+
+                        </div>
+                    </div>
+
+
+                    <div id="property_search_results_2" class="col-lg-12" style="display: block; position: absolute; bottom: 0; z-index: 100; padding: 0 2% 0 2%;">
+                       
+                    </div>
+                    <div id="property_search_results_1" class="col-lg-12" style="display: block; position: absolute; bottom: 0; z-index: 100; padding: 0 2% 0 2%;">
+                        
+                    </div>
+
+
+                    <!-- End: Map Controls -->
+
+
+                   
+
+                </div>
+                <!--  -->
+
+
+            </div>
+           
+        
+        
+    </div>
+    <div class="col-md-3 col-sm-12 col-lg-3 col-xl-3">
+        <div class="card indicator" id="planning_table">
+            <div class="card-header border-bottom" style="background-color: #00663A;justify-content: start; height: 5rem;">
+                <p class="text-white">Tariro Mawire R206096W</p>      
+				<button type="button" style="color: #fff;" class="btn  m-2" data-bs-target="#modaldemo1" data-bs-toggle="modal" href="javascript:void(0)"><i class="ion-plus" data-bs-toggle="tooltip" title="Add Record"></i> Add Record</button>
+            </div>
+            <div class="" style="display: flex; flex-direction: row; justify-content: space-between; margin-inline:.5rem;">
+                <div class="ind" >
+                    <p>Maize Seed </p>
+                    <p class="fw-bold">{{maize_total}} t</p>
+                    <p>In Stock</p>
+                </div>
+                <div class="ind">
+                    <p>Sorghum </p>
+                    <p class="fw-bold">{{sorghum_total}} t</p>
+                    <p>In Stock</p>
+                </div>
+                <div class="ind">
+                    <p>Fertilizer</p>
+                    <p class="fw-bold">{{fertilizer_total}} t</p>
+                    <p>In Stock</p>
+                </div>
+
+            </div>
+            <br>
+            
+            
+            <div style="margin-inline: .5rem;">
+                
+                <div class="table-responsive export-table">
+                    <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom  w-100">
+                        <thead>
+                            <tr class="table_changed">
+                                <th class="fw-bold">Province</th>
+                                <th class="fw-bold">Maize(t)</th>
+                                <th class="fw-bold">Sorghum(t)</th>
+                                <th class="fw-bold">Fertilizer(t)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for allocated in provinces_allocated %}
+                            <tr>
+                                <td class="width"> {{ allocated.province.name }}</td>
+                                <td>{{ allocated.maize }}</td>
+                                <td>{{ allocated.sorghum }}</td>
+                                <td> {{ allocated.fertilizer }}</td>
+                            </tr>
+                            {% endfor %}  
+                        </tbody>
+                    </table>
+                   
+                </div>
+            </div>
+
+        </div>
+        
+        
+        <div class="card indicator">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h3 class="mb-2 fw-semibold text-dark">{{ allocated_count }}</h3>
+                        <p class="text-muted fs-13 mb-0">Allocated Farms</p>
+                        
+                    </div>
+                    <div class="col col-auto top-icn dash">
+                        <div class="counter-icon  dash ms-auto box-shadow-info" style="background-color: #00663A;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="fill-white" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><path d="M7.5,12C7.223877,12,7,12.223877,7,12.5v5.0005493C7.0001831,17.7765503,7.223999,18.0001831,7.5,18h0.0006104C7.7765503,17.9998169,8.0001831,17.776001,8,17.5v-5C8,12.223877,7.776123,12,7.5,12z M19,2H5C3.3438721,2.0018311,2.0018311,3.3438721,2,5v14c0.0018311,1.6561279,1.3438721,2.9981689,3,3h14c1.6561279-0.0018311,2.9981689-1.3438721,3-3V5C21.9981689,3.3438721,20.6561279,2.0018311,19,2z M21,19c-0.0014038,1.1040039-0.8959961,1.9985962-2,2H5c-1.1040039-0.0014038-1.9985962-0.8959961-2-2V5c0.0014038-1.1040039,0.8959961-1.9985962,2-2h14c1.1040039,0.0014038,1.9985962,0.8959961,2,2V19z M12,6c-0.276123,0-0.5,0.223877-0.5,0.5v11.0005493C11.5001831,17.7765503,11.723999,18.0001831,12,18h0.0006104c0.2759399-0.0001831,0.4995728-0.223999,0.4993896-0.5v-11C12.5,6.223877,12.276123,6,12,6z M16.5,10c-0.276123,0-0.5,0.223877-0.5,0.5v7.0005493C16.0001831,17.7765503,16.223999,18.0001831,16.5,18h0.0006104C16.7765503,17.9998169,17.0001831,17.776001,17,17.5v-7C17,10.223877,16.776123,10,16.5,10z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card indicator">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h3 class="mb-2 fw-semibold text-dark">{{ not_allocated_count }}</h3>
+                        <p class="text-muted fs-13 mb-0">Awaiting Allocation</p>
+                        
+                    </div>
+                    <div class="col col-auto top-icn dash">
+                        <div class="counter-icon  dash ms-auto box-shadow-info" style="background-color: #00663A;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="fill-white" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><path d="M7.5,12C7.223877,12,7,12.223877,7,12.5v5.0005493C7.0001831,17.7765503,7.223999,18.0001831,7.5,18h0.0006104C7.7765503,17.9998169,8.0001831,17.776001,8,17.5v-5C8,12.223877,7.776123,12,7.5,12z M19,2H5C3.3438721,2.0018311,2.0018311,3.3438721,2,5v14c0.0018311,1.6561279,1.3438721,2.9981689,3,3h14c1.6561279-0.0018311,2.9981689-1.3438721,3-3V5C21.9981689,3.3438721,20.6561279,2.0018311,19,2z M21,19c-0.0014038,1.1040039-0.8959961,1.9985962-2,2H5c-1.1040039-0.0014038-1.9985962-0.8959961-2-2V5c0.0014038-1.1040039,0.8959961-1.9985962,2-2h14c1.1040039,0.0014038,1.9985962,0.8959961,2,2V19z M12,6c-0.276123,0-0.5,0.223877-0.5,0.5v11.0005493C11.5001831,17.7765503,11.723999,18.0001831,12,18h0.0006104c0.2759399-0.0001831,0.4995728-0.223999,0.4993896-0.5v-11C12.5,6.223877,12.276123,6,12,6z M16.5,10c-0.276123,0-0.5,0.223877-0.5,0.5v7.0005493C16.0001831,17.7765503,16.223999,18.0001831,16.5,18h0.0006104C16.7765503,17.9998169,17.0001831,17.776001,17,17.5v-7C17,10.223877,16.776123,10,16.5,10z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        <!-- planning table -->
+        
+        
+        
+    </div>
+    <div class="modal fade modal-right"  id="modaldemo1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" id="header" style="background-color: #00663A;">
+                    <h4 class="modal-title w-100  d-flex  fw-semibold" style="color: #fff;"> Farm Inputs Allocation</h4>
+                    
+                </div>
+                <form  enctype="multipart/form-data"  action="" method="POST"> {% csrf_token %}
+            <div class="modal-body">
+                
+                <div class="">
+                    <label class="form-label" for="name-wiz1"> Select A Farm </label>
+                    {{ allocationForm.farms }}
+                </div>
+                
+               
+                
+                <div class="remove" id="own">
+                    <label class="form-label" for="name-wiz1"> Input Maize In Tonnes </label>
+                    {{ allocationForm.maize }}
+                </div>
+                <div class="company_name" id="comp">
+                    <label class="form-label" for="name-wiz1"> Input Sorghum In Tonnes </label>
+                    {{ allocationForm.sorghum }}
+                </div>
+                <div class="">
+                    <label class="form-label" for="name-wiz1">Input Fertilizer In Tonnes </label>
+                    {{ allocationForm.fertilizer }}
+                </div>
+
+                
+            </div>
+
+            
+           
+               
+            <button type="submit" style="color: #fff; background-color: #00663A;" class="btn ">Allocate</button>
+            
+        </form>
+    </div>
+    
+    <!-- End Row-->
+
+    
+    <!-- End Row-->
+
+</div>
+
+<!-- The Invisible DIV -->
+<div id="admin_div_results" style="display: none;"></div>
+
+
+<script>
+  
+</script>
+
+<script>
+    var property_style, mapSearchByGrid, image_wms, property_source, suburb_source, beacon_source, dq_params, view, geoserver_url, popup_overlay, layerSwitcher, master_blob, master_property_id, master_property_id_func,Source;
+    var map_search_type, identify_onclick, searchOption, dragZoom, DrawIntereaction;
+    var environment_source, environment_layer, polygon_interaction, circle_interaction, area_profiling_function;
+    var  hide_processing ,display_processing;
+
+    $(document).ready(function() {
+
+        map_centroid = [29.500, -19.000];
+        map_initial_zoom = 7.3;
+        map_bounds = [24.8985252380371, -22.4835205078125, 33.0517845153809, -15.4811754226685];
+        geoserver_url = 'http://' + window.location.hostname + ':8080/geoserver/ecadastre/wms';
+        map_search_type = $('#map_search_type').val();
+       
+
+
+        // Image wms layers. 
+        image_wms = function(layer_name, geoserver_url, opacity_value, title, _visible) {
+            var image_wms_layer = new ol.layer.Image({
+                extent: map_bounds,
+                title: title,
+                visible: _visible,
+                source: new ol.source.ImageWMS({
+                    url: geoserver_url,
+                    params: {
+                        'LAYERS': layer_name,
+                        'TILED': true
+                    },
+                    serverType: 'geoserver',
+                    crossOrigin: 'Anonymous'
+                }),
+                opacity: opacity_value
+            });
+            return image_wms_layer;
+        }
+
+
+
+
+        property_style = function(feature) {
+            var geometry = feature.getGeometry();
+            var styles = [
+                new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 5,
+                        stroke: new ol.style.Stroke({
+                            color: 'rgba(241, 80, 37, 1)',
+                        }),
+                        fill: new ol.style.Fill({
+                            color: 'rgba(256, 0, 0, 0.2)'
+                        })
+                    }),
+                    // geometry: function(feature) {
+                    //     var coordinates = feature.getGeometry().getCoordinates()[0];
+                    //     return new ol.geom.MultiPoint(coordinates);
+                    // }
+                }),
+                new ol.style.Style({
+                    text: new ol.style.Text({
+                        font: 'Bold 12px Arial',
+                        fill: new ol.style.Fill({
+                            color: 'rgba(0, 0, 0, 1)'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: 'black',
+                            width: 0.5
+                        }),
+                        text: feature.get('name'),
+                        offsetY: 15
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(241, 80, 37, 1)',
+                        lineDash: [5, 5],
+                        width: 3
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(256, 0, 0, 0.2)'
+                    }),
+                }),
+            ];
+            return styles;
+        }
+
+
+        
+
+
+
+
+        // Layer for drawing the rest of the polygons
+        var environment_features = new ol.Collection();
+        environment_source = new ol.source.Vector({
+            features: environment_features,
+            wrapX: false
+        });
+        environment_layer = new ol.layer.Vector({
+            source: environment_source,
+           
+            id: 'environment_layer',
+            title: 'Environment Vector',
+            'displayInLayerSwitcher': false
+        });
+
+
+
+        suburb_source = new ol.source.Vector();
+        var suburb_layer = new ol.layer.Vector({
+            source: suburb_source,
+            // style: suburb_style,
+            id: 'suburb_layer',
+            title: 'Suburb Vector',
+            'displayInLayerSwitcher': false
+        });
+
+        // A group layer for base layers
+        var base_layers = new ol.layer.Group({
+            title: 'Base',
+            openInLayerSwitcher: false,
+            layers: [
+
+                new ol.layer.Tile({
+                    title: 'Imagery',
+                    baseLayer: true,
+                    visible: true,
+                    source: new ol.source.XYZ({
+                        url: 'https://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFydW1lIiwiYSI6ImNqbjMxbGxxMDF1NnczcXBsdG9rbHAxY28ifQ.gIFXwF7XPypfMiLfBN90_g',
+                        attribution: "© DigitalGlobe, Inc",
+                        crossOrigin: 'anonymous'
+                    })
+                }),
+                // new ol.layer.Tile({
+                //     title: "Toner",
+                //     baseLayer: true,
+                //     visible: false,
+                //     source: new ol.source.Stamen({
+                //         layer: 'toner',
+                //         crossOrigin: 'anonymous'
+                //     })
+                // }),
+                new ol.layer.Tile({
+                    title: "OSM",
+                    baseLayer: true,
+                    visible: false,
+                    source: new ol.source.OSM({
+                        crossOrigin: 'anonymous'
+                    })
+                })
+            ]
+        });
+
+
+
+
+        // A group layer for base layers
+        
+         // A group layer for base layers
+         var base_layers = new ol.layer.Group({
+            title: 'Satellite Base Layer',
+            openInLayerSwitcher: false,
+            layers: [
+
+
+                new ol.layer.Tile({
+                    title: "Imagery",
+                    baseLayer: true,
+                    visible: true,
+                    source: new ol.source.XYZ({
+                        url: 'https://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFydW1lIiwiYSI6ImNqbjMxbGxxMDF1NnczcXBsdG9rbHAxY28ifQ.gIFXwF7XPypfMiLfBN90_g',
+                        attribution: "© DigitalGlobe, Inc",
+                        crossOrigin: 'anonymous'
+                    })
+                })
+            ]
+        });
+        var osm_layer = new ol.layer.Group({
+            title: 'OSM Base Layer',
+            openInLayerSwitcher: false,
+            layers: [
+                new ol.layer.Tile({
+                    title: "OSM",
+                    baseLayer: true,
+                    visible: true,
+                    source: new ol.source.OSM({
+                        crossOrigin: 'anonymous'
+                    })
+                })
+
+                
+            ]
+        });
+
+        var styled = [
+        /* We are using two different styles for the polygons:
+         *  - The first style is for the polygons themselves.
+         *  - The second style is to draw the vertices of the polygons.
+         *    In a custom `geometry` function the vertices of a polygon are
+         *    returned as `MultiPoint` geometry, which will be used to render
+         *    the style.
+         */
+        new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: 'blue',
+            width: 3
+          }),
+          fill: new ol.style.Fill({
+            color: 'rgba(0, 0, 255, 0.1)'
+          })
+        }),
+        new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 5,
+            fill: new ol.style.Fill({
+              color: 'orange'
+            })
+          }),
+          geometry: function(feature) {
+            // return the coordinates of the first ring of the polygon
+            var coordinates = feature.getGeometry().getCoordinates()[0];
+            return new ol.geom.MultiPoint(coordinates);
+          }
+        })
+      ];
+
+
+
+        // farms layer
+        
+        
+        // var topoLayers = new ol.layer.Vector({
+        //     source: new ol.source.Vector({
+        //         url: 'http://localhost:8080/geoserver/Postgress/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Postgress%3Afarms&maxFeatures=50&outputFormat=application/json',
+        //         format: new ol.format.GeoJSON(),
+        //         attributions: '@geoserver',
+        //     }),
+        //     id: 'beacon_layer',
+        //     title: 'Vector',
+        //     'displayInLayerSwitcher': false
+        // });
+       
+
+        var farmsource = new ol.source.TileWMS({
+                    url: 'http://localhost:8080/geoserver/tarie/wms',
+                    params: {'LAYERS': 'tarie:new_farmsshp', 'TILED': true },
+                    serverType: 'geoserver',
+                   
+                    visible: true
+                        
+        })
+        var topoLayers = new ol.layer.Group({
+            title : "Zimbabwe Farms",
+            'displayInLayerSwitcher': true,
+            layers: [
+            new ol.layer.Tile({
+                title : "Zimbabwe Farms",
+                visible: true,
+                source: farmsource,
+
+            })
+            
+
+            
+            ]
+           
+        });
+
+
+
+        // zim boundary layer
+        var boundaryLayers = new ol.layer.Group({
+            title: 'Zimbabwe Boundary',
+            'displayInLayerSwitcher': true,
+            
+            layers: [
+            new ol.layer.Tile({
+                title : "Zimbabwe Boundary",
+                   
+                    visible: true,
+                    source: new ol.source.TileWMS({
+                        url: 'http://localhost:8080/geoserver/Postgress/wms',
+                        params: {'LAYERS': 'Postgress:zwe_adm0', 'TILED': true },
+                        serverType: 'geoserver',
+                        visible: true
+                    
+    }),
+            })
+            ]
+        });
+
+        // zimbabwe provinces layer
+        var farmLayers = new ol.layer.Group({
+            title: 'Zimbabwe Farms',
+            'displayInLayerSwitcher': true,
+            
+            layers: [
+            new ol.layer.Tile({
+                title : "Zimbabwe Farms",
+                   
+                    visible: true,
+                    source: new ol.source.TileWMS({
+                        url: 'http://localhost:8080/geoserver/tarie/wms',
+                        params: {'LAYERS': 'tarie:newfarms', 'TILED': true },
+                        serverType: 'geoserver',
+                        visible: true
+                    
+    }),
+            })
+            ]
+        });
+
+
+
+
+
+
+        // A group layer for base layers
+       
+
+
+
+   
+        
+        // A group layer for base layers
+       
+
+        // // A group layer for base layers
+        // var admin_layers = new ol.layer.Group({
+        //     title: 'Admin Layers',
+        //     openInLayerSwitcher: true,
+        //     // collapsed: false,
+        //     layers: [
+        //         // image_wms('municipal_gis:country', geoserver_url, 0.7, 'Country', false),
+        //         // image_wms('municipal_gis:province', geoserver_url, 0.7, 'Province', false),
+        //         // image_wms('municipal_gis:district', geoserver_url, 0.7, 'District', false),
+        //         image_wms('municipal_gis:municipal', geoserver_url, 0.7, 'Municipal', true),
+        //         // image_wms('municipal_gis:constituency', geoserver_url, 1.0, 'Constituency', true),
+        //         image_wms('municipal_gis:ward', geoserver_url, 0.7, 'Ward', false),
+        //         image_wms('municipal_gis:suburb', geoserver_url, 0.78, 'Suburb', true),
+        //         tile_wms('municipal_gis:property', geoserver_url, 1.0, 'Property', true),
+        //     ]
+        // });
+
+
+
+        // var utility_layers = new ol.layer.Group({
+        //     title: 'Utility Layers',
+        //     openInLayerSwitcher: false,
+        //     collapsed: true,
+        //     layers: [
+        //         image_wms('municipal_gis:power_line', geoserver_url, 1.0, 'Power Line', false),
+        //         image_wms('municipal_gis:power_equipment', geoserver_url, 1.0, 'Power Equipment', false),
+
+        //         image_wms('municipal_gis:telephone_line', geoserver_url, 1.0, 'Telephone Line', false),
+        //         image_wms('municipal_gis:telephone_equipment', geoserver_url, 1.0, 'Telephone Equipment', false),
+
+        //         image_wms('municipal_gis:water_line', geoserver_url, 1.0, 'Water Line', false),
+        //         image_wms('municipal_gis:water_equipment', geoserver_url, 1.0, 'Water Equipment', false),
+
+        //         image_wms('municipal_gis:sewer_line', geoserver_url, 1.0, 'Sewer Line', false),
+        //         image_wms('municipal_gis:sewer_equipment', geoserver_url, 1.0, 'Sewer Equipment', false),
+        //     ]
+        // });
+
+        property_source = new ol.source.Vector();
+        var property_layer = new ol.layer.Vector({
+            source: property_source,
+            style: property_style,
+            id: 'property_layer',
+            title: 'Vector',
+            'displayInLayerSwitcher': false
+        });
+
+        
+
+        
+
+
+
+
+        // A group layer for base layers
+        // var topo_layers = new ol.layer.Group({
+        //     title: 'Topo Layers',
+        //     openInLayerSwitcher: false,
+        //     collapsed: false,
+        //     layers: [
+        //         image_wms('municipal_gis:catchment_area', geoserver_url, 1.0, 'Catchment Area', false),
+        //         image_wms('municipal_gis:landuse', geoserver_url, 1.0, 'Landuse', false),
+        //         image_wms('municipal_gis:street', geoserver_url, 0.7, 'Road', false),
+        //         image_wms('municipal_gis:rail', geoserver_url, 0.7, 'Rail', false),
+        //         image_wms('municipal_gis:property_beacon', geoserver_url, 0.8, 'Property Beacon', false),
+        //         // image_wms('municipal_gis:trig_beacon', geoserver_url, 0.8, 'Tsm/Trig Beacon', false),
+        //     ]
+        // });
+
+
+        // Object of map layers
+        layers = [
+            
+
+
+            base_layers,
+
+            
+
+            boundaryLayers,
+            
+            farmLayers ,
+
+            
+            
+           
+
+        ];
+
+
+
+        // layers projection.
+        var projection = new ol.proj.Projection({
+            code: 'EPSG:4326',
+            units: 'degrees',
+            axisOrientation: 'neu'
+        });
+
+
+        view = new ol.View({
+            center: map_centroid,
+            projection: projection,
+            zoom: map_initial_zoom
+        });
+
+
+        // map object
+        map = new ol.Map({
+            layers: layers,
+            target: 'id_geom_map',
+            view: view,
+            controls: ol.control.defaults({
+                "attribution": false,
+                "zoom": false
+            }),
+            interactions: ol.interaction.defaults({
+                doubleClickZoom: false
+            })
+        });
+
+        var mapTarget = $(map.getTargetElement());
+
+
+
+        var scaleLineControl = new ol.control.ScaleLine({});
+        map.addControl(scaleLineControl);
+
+        var dragZoom = new ol.interaction.DragZoom({
+            condition: ol.events.condition.always
+        });
+
+
+        // Select  interaction
+        var feature_select = new ol.interaction.Select({
+            hitTolerance: 5,
+            multi: true,
+            condition: ol.events.condition.singleClick
+        });
+
+
+        // Coordinate control
+        var positionControl = new ol.control.CenterPosition({
+            canvas: true,
+            coordinateFormat: function(coord) {
+                return ol.coordinate.toStringXY(coord, 5);
+            },
+            projection: 'EPSG:4326'
+        });
+        map.addControl(positionControl);
+
+
+        var permalink = new ol.control.Permalink({
+            geohash: /gh=/.test(document.location.href),
+            visible: false,
+            urlReplace: false,
+            localStorage: true,
+            onclick: function(url) {
+                document.location = "mailto:?subject=subject&body=" + encodeURIComponent(url);
+            }
+        });
+        map.addControl(permalink);
+
+
+
+        $(".layer-switch-btn").click(function() {
+            var name = $(this).attr('data-x');
+            $.ajax({
+                type: "GET",
+                url: "",
+                beforeSend: function() {},
+                success: function(text) {
+                    $("#map_search_form").html(text);
+                },
+                error: function(xhr, textStatus, error) {}
+            });
+        });
+
+
+
+        $(".map-form-btn").click(function() {
+            var name = $(this).attr('data-x');
+            $.ajax({
+                type: "GET",
+                url: "",
+                beforeSend: function() {},
+                success: function(text) {
+                    $("#map_search_form").html(text);
+                },
+                error: function(xhr, textStatus, error) {}
+            });
+        });
+
+
+
+
+        // *** START : MAP POPUP ***
+
+        var container = document.getElementById('popup');
+        var content = document.getElementById('popup-content');
+        var closer = document.getElementById('popup-closer');
+        var popup_overlay = new ol.Overlay(({
+            element: container,
+            autoPan: true,
+            positioning: 'bottom-center',
+            autoPanAnimation: {
+                duration: 250
+            }
+        }));
+        map.addOverlay(popup_overlay);
+
+        // the onclick function to close the popup.
+        if (closer != null) {
+            closer.onclick = function() {
+                popup_overlay.setPosition(undefined);
+                closer.blur();
+                return false;
+            };
+        }
+        
+
+        // map onclick to open a popup
+        function identify_onclick(evt) {
+            var coordinate = evt.coordinate;
+            var popup_layers = queriable_layers([topoLayers, ]);
+            var viewResolution = (view.getResolution());
+            var wmsSource = new ol.source.TileWMS({
+                url: 'http://localhost:8080/geoserver/Postgress/wms',
+                crossOrigin: 'proxy',
+                params: {'LAYERS': 'Postgress:farms', 'TILED': true,'admin': 'postgres', },
+                serverType: 'geoserver'
+            });
+            var url = wmsSource.getGetFeatureInfoUrl(
+                evt.coordinate, viewResolution, 'EPSG:4326', {
+                    'INFO_FORMAT': 'application/json',
+                    'admin': 'geoserver',
+                });
+
+            // console.log(url);
+            var feature_bbox = '';
+    var popup_function = function(data) {
+        
+        var id = data['id'];
+        var id_str = id.lastIndexOf(".");
+        var array_data = data['properties'];
+        var table_data = '<table class="table table-bordered popup-table"><thead> <th>Attribute</th><th style=min-width:150px;">"Value</th></tr> </thead><tbody id="popup-table">';
+        var index = 1;
+        var x;
+        for (x in array_data) {
+            table_data = table_data + popup_row(x, array_data);
+            index++;
+        }
+        table_data = table_data + '</tbody></table>';
+        $('#popup-title').html(id.slice(0, id_str).replace("_", " ").toUpperCase() + '<div class="position-absolute card-top-buttons p-2"><button class="btn btn-header-light icon-button"  onclick="featureZoom([' + feature_bbox + '])" ><i class="iconsminds-location-2"></i></button></div>');
+        $('#popup-panel').html(table_data);
+    }
+
+    function popup_row(x, array_data) {
+        document.getElementById('popUP').classList.remove('popUP');
+
+        if (x == 'bbox') {
+            feature_bbox = array_data[x];
+            return '';
+        } else {
+            return '<tr><td>' + x + '</td><td>' + array_data[x] + '</td></tr>';
+        }
+        
+        property_source.clear();
+        property_source.addFeatures((new ol.format.GeoJSON()).readFeatures({{ array_data|safe }}));
+        var layerExtent = property_source.getExtent();
+        var bufferedExtent = new ol.extent.buffer(layerExtent, 0.002);
+        map.getView().fit(bufferedExtent, {
+            duration: 2000
+        });
+    }
+
+    featureZoom = function(bbox) {
+        console.log(bbox);
+
+        var bufferedExtent = new ol.extent.buffer(bbox, 0.002);
+        map.getView().fit(bufferedExtent, {
+            duration: 2000
+        });
+    }
+
+            if (url) {
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: "",
+                    success: function(text) {
+                        if (text.features.length > 0) {
+                            var popup_data = text.features['0'];
+                            $('.ol-popup').hide();
+                            console.log(popup_data)
+                            popup_function(popup_data);
+                            // popup_overlay.setPosition(coordinate);
+                        } else {
+                            $('.ol-popup').hide();
+                            popup_overlay.setPosition(undefined);
+                        }
+                    }
+                });
+            }
+        };
+
+        // *** END : MAP POPUP ***
+        
+        // // map onclick to open a popup
+        // function query_feature(evt) {
+        //     var json_coordinate = JSON.stringify(evt.coordinate);
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "{% url 'farm-master-search' 'beacon-proximity' %}",
+        //         data: "csrfmiddlewaretoken={{ csrf_token }}&json_coordinate=" + json_coordinate,
+        //         beforeSend: function() {
+        //             display_processing();
+        //         },
+        //         success: function(data) {
+        //             setTimeout(() => {
+        //                 $('#property_search_results_2' ).html(data);
+        //                 hide_processing();
+        //             }, 900);
+        //         },
+        //         error: function(xhr, textStatus, error) {
+        //             hide_processing();
+        //         }
+        //     });
+        // };
+
+
+
+
+
+
+
+
+        $('.close-form').click(function() {
+            var target = $(this).parent().closest('.mgis-map-form');
+            target.fadeOut(300, function() {
+                $(this).remove();
+            });
+
+        });
+
+
+
+
+
+
+
+
+        queriable_layers = function(layer_groups) {
+            var queriable_layers_array = [];
+            $.each(layer_groups, function(index, value) {
+                var layer_group = value.getLayers().getArray();
+                // console.log(layer_group);
+
+                $.each(layer_group, function(index_1, element) {
+                    if (element.getVisible()) {
+                        var layer_name = element.getSource().getParams()['LAYERS'];
+                       
+                        queriable_layers_array.push(layer_name);
+                    }
+                });
+            });
+            return queriable_layers_array.reverse();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        $('#print-map').click(function() {
+            blob_preparation();
+        });
+
+        function blob_preparation() {
+            map.once('postcompose', function(event) {
+                var canvas = event.context.canvas;
+                canvas.toBlob(function(blob) {
+                    master_blob = blob;
+                    download_property_report();
+
+                });
+            });
+            map.renderSync();
+        }
+
+        function download_property_report() {
+            var fd = new FormData();
+            fd.append('property_id', master_property_id);
+            fd.append('map', master_blob);
+            fd.append('csrfmiddlewaretoken', $('#access-token input').val());
+            console.log('{% csrf_token %}');
+            $.ajax({
+                type: "POST",
+                url: "",
+                data: fd,
+                processData: false,
+                contentType: false,
+                beforeSend: function() {
+                    display_processing();
+                },
+                success: function(data) {
+                    var blob = new Blob([data]);
+                    console.log(data.name);
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "property-general-report.pdf";
+                    link.click();
+                    hide_processing();
+                },
+                error: function(xhr, textStatus, error) {
+                    hide_processing();
+                }
+            });
+        }
+
+        master_property_id_func = function(data) {
+            var obj = JSON.parse(data.data);
+            master_property_id = obj.features[0].properties.pk;
+        }
+
+
+        dragZoom = new ol.interaction.DragZoom({
+            condition: ol.events.condition.always
+        });
+
+
+
+
+        // map onclick to open a popup
+        function query_feature(evt) {
+            var json_coordinate = JSON.stringify(evt.coordinate);
+            $.ajax({
+                type: "GET",
+                
+                data: "csrfmiddlewaretoken={{ csrf_token }}&json_coordinate=" + json_coordinate,
+                beforeSend: function() {
+                    display_processing();
+                },
+                success: function(data) {
+                    setTimeout(() => {
+                        $('#property_search_results_2').html(data);
+                        hide_processing();
+                    }, 900);
+                },
+                error: function(xhr, textStatus, error) {
+                    hide_processing();
+                }
+            });
+        };
+
+
+
+
+
+
+        // *** START : MAP INTERACTIONS ***
+
+        $("#dragZoomBtn").click(function() {
+            removeInteractions();
+            $(this).addClass('active');
+            map.addInteraction(dragZoom);
+            mapTarget.css('cursor', 'crosshair');
+        });
+
+        $("#pan-map").click(function() {
+            var is_active = $(this).hasClass("active");
+            if (is_active) {
+                removeInteractions();
+            } else {
+                removeInteractions();
+                $(this).addClass('active');
+                mapTarget.css('cursor', 'grab');
+            }
+        });
+
+
+
+       
+
+        // $('#zoom-plus').click(function() {
+        //     map.getView().animate({
+        //         zoom: map.getView().getZoom() - 1,
+        //         duration: 200
+        //     })
+        // });
+
+
+        // $('#zoom-minus').click(function() {
+        //     map.getView().animate({
+        //         zoom: map.getView().getZoom() + 1,
+        //         duration: 200
+        //     })
+        // });
+
+
+        $('#clear-map').click(function() {
+            clear_map_vector();
+        });
+
+
+        // $('#identify-property').click(function() {
+        //     map.on('dblclick', identify_onclick_property);
+        // });
+
+
+        // $('#beaconProximityBtn').click(function() {
+        //     removeInteractions();
+        //     $(this).addClass('active');
+        //     data_query = $(this).attr('data');
+        //     map.on('singleclick', query_feature);
+        //     // mapTarget.css('cursor', 'help');
+        // });
+
+
+        $("#identifyFeatureBtn").click(function() {
+            removeInteractions();
+            map.on('singleclick', identify_onclick);
+            $(this).addClass('active');
+            mapTarget.css('cursor', 'help');
+        });
+
+        // *** END : MAP INTERACTIONS ***
+
+
+
+
+
+        layerSwitcher = new ol.control.LayerSwitcher({
+            target: $("#map_layers_panel").get(0),
+        });
+        map.addControl(layerSwitcher);
+
+
+
+
+        // 
+        // Grid search ajax : enm.
+        // Start
+        // 
+
+
+        $("#map_search_value").on('change', function() {
+            var map_search_type = $('#map_search_type').val();
+            var map_search_value = $('#map_search_value').val();
+            console.log(map_search_value);
+            // Call on the post function : enm.
+            mapSearchByGrid(map_search_type, map_search_value);
+        });
+
+
+
+        mapSearchByGrid = function(map_search_type, map_search_value) {
+            $.ajax({
+                type: "POST",
+                url: "",
+                data: 'map_search_type=' + map_search_type + '&map_search_value=' + map_search_value + '&csrfmiddlewaretoken={{ csrf_token }}',
+                beforeSend: function() {
+                    // display_processing();
+                    console.log('enm: map search by grid ... started');
+                },
+                success: function(text) {
+                    setTimeout(() => {
+                        console.log('enm: map search by grid ... success');
+                        $("#admin_div_results").html(text);
+                        // hide_processing();
+                    }, 900);
+                },
+                error: function(xhr, textStatus, error) {
+                    // hide_processing();
+                    console.log('enm: map search by grid ... failed');
+
+                }
+            });
+        };
+
+        mapSearchByGrid2 = function(map_search_type, map_search_value) {
+            $.ajax({
+                type: "POST",
+                url: "",
+                data: 'map_search_type=' + map_search_type + '&map_search_value=' + map_search_value + '&csrfmiddlewaretoken={{ csrf_token }}',
+                beforeSend: function() {
+                    // display_processing();
+                    console.log('enm: map search by grid ... started');
+                },
+                success: function(text) {
+                    setTimeout(() => {
+                        console.log('enm: map search by grid ... success');
+                        $("#map_grid_results").html(text);
+                        // hide_processing();
+                    }, 900);
+                },
+                error: function(xhr, textStatus, error) {
+                    // hide_processing();
+                    console.log('enm: map search by grid ... failed');
+
+                }
+            });
+        };
+
+
+
+
+        // 
+        // Grid search ajax: enm.
+        // End
+        // 
+
+        $('#map_search_type').on('change', function() {
+            var the_value = this.value;
+            if (the_value == 'province') {
+                search_rl = "";
+            } else if (the_value == 'district') {
+                search_rl = "";
+            } else if (the_value == 'town') {
+                search_rl = "";
+            } else if (the_value == 'suburb') {
+                search_rl = "";
+            } else if (the_value == 'pois') {
+                search_rl = "";
+            }
+        });
+
+
+
+        $('#map_search_value').select2({
+            ajax: {
+                url: function() {
+                    return search_rl
+                },
+                dataType: "json",
+                type: "GET",
+                data: function(params) {
+                    var queryParameters = {
+                        q: params.term,
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    }
+                    return queryParameters;
+                },
+                processResults: function(data) {
+                    return {
+                        results: data
+                    };
+                }
+            },
+            placeholder: 'Select ...',
+            minimumInputLength: 1
+        });
+
+
+
+
+
+
+        $('#map_search_options').on('change', function() {
+            var search_form = $(this).val();
+            searchOption(search_form);
+
+
+
+        });
+
+
+
+
+      
+
+        // $('#map_search_options').select2({
+        //     ajax: {
+        //         url: "",
+        //         dataType: "json",
+        //         type: "POST",
+        //         data: function(params) {
+        //             var queryParameters = {
+        //                 q: params.term,
+        //                 csrfmiddlewaretoken: "{{ csrf_token }}"
+        //             }
+        //             return queryParameters;
+        //         },
+        //         processResults: function(data) {
+        //             return {
+        //                 results: data
+        //             };
+        //         }
+        //     },
+        //     placeholder: 'Select ...',
+        //     minimumInputLength: 1
+        // });
+
+
+
+
+        $("#switcher-btn").click(function() {
+            $(".grid-map-switch").toggle();
+        });
+
+
+        $('#customZoomIn').on('click', function() {
+            var view = map.getView();
+            var zoom = view.getZoom();
+            view.animate({
+                zoom: zoom + 1,
+                duration: 200
+            });
+        });
+
+        $('#customZoomOut').on('click', function() {
+            var view = map.getView();
+            var zoom = view.getZoom();
+            view.animate({
+                zoom: zoom - 1,
+                duration: 200
+            });
+        });
+
+    var features = new ol.Collection();
+      var featureOverlay = new ol.layer.Vector({
+        source: new ol.source.Vector({features: features}),
+        style: new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: 'rgba(255, 255, 255, 0.2)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: '#ffcc33',
+            width: 2
+          }),
+          image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+              color: '#ffcc33'
+            })
+          })
+        })
+      });
+      featureOverlay.setMap(map);
+
+        $(".drawPolygonTool").click(function() {
+            var name = $(this).attr('data-x');
+            DrawIntereaction(name);
+
+        });
+
+
+       
+
+       
+       
+
+
+      
+
+      
+
+        drawPloygons = function addInteractions() {
+        var draw = new ol.interaction.Draw({
+          source: Source,
+          type: ('Polygon')
+        });
+       
+
+       
+        
+        map.addInteraction(draw);
+
+      } 
+
+        $("#drawPolygon").click(function() {
+            var name = $(this).attr('data-x');
+            console.log('clicked')
+            drawPloygons();
+
+        });
+
+        drawPointss = function addInteractions() {
+        draw = new ol.interaction.Draw({
+          source: Source,
+          type: ('Point')
+        });
+        
+        map.addInteraction(draw);
+      }  
+
+        $("#drawPoints").click(function() {
+            console.log('clicked')
+            drawPointss();
+            
+
+        });
+        
+
+        drawLiness = function addInteractions() {
+        draw = new ol.interaction.Draw({
+            source: Source,
+            type: ('LineString')
+            });
+       
+        
+        map.addInteraction(draw);
+       
+      }  
+
+        $("#drawLines").click(function() {
+            console.log('clicked')
+            drawLiness();
+            
+
+        });
+
+        // save drawn interaction
+        
+        
+        // end download
+        
+
+        // new
+        var modify = new ol.interaction.Modify({
+        features: features,
+        // the SHIFT key must be pressed to delete vertices, so
+        // that new vertices can be drawn at the same position
+        // of existing vertices
+        deleteCondition: function(event) {
+          return ol.events.condition.shiftKeyOnly(event) &&
+              ol.events.condition.singleClick(event);
+        }
+      });
+      map.addInteraction(modify);
+
+
+      
+        
+        
+
+        DrawIntereaction = function(draw_tool) {
+            removeInteractions();
+            if (draw_tool !== 'None') {
+                var geometryFunction;
+
+                if (draw_tool === 'LineString') {
+
+                    polygon_interaction = new ol.interaction.Draw({
+                        features: environment_features,
+                        type: (draw_tool)
+                    });
+                    source.addFeature(features);
+                    map.addInteraction(polygon_interaction);
+
+                } else if (draw_tool === 'Polygon') {
+
+                    polygon_interaction = new ol.interaction.Draw({
+                        features: environment_features,
+                        type: (draw_tool)
+                    });
+                    source.addFeature(features);
+                   
+                    map.addInteraction(polygon_interaction);
+                    draw_buffer(polygon_interaction);
+
+                    // draw_polygon(polygon_interaction);
+
+                } else if (draw_tool === 'Point') {
+
+                    polygon_interaction = new ol.interaction.Draw({
+                        features: environment_features,
+                        
+                        type: (draw_tool)
+                    });
+                    source.addFeature(features);
+                    map.addInteraction(polygon_interaction);
+                    // draw_point_proximity(polygon_interaction);
+
+                } else if (draw_tool === 'Circle') {
+
+                    polygon_interaction = new ol.interaction.Draw({
+                        features: environment_features,
+                        type: (draw_tool)
+                    });
+                    source.addFeature(features);
+                    map.addInteraction(polygon_interaction);
+                    draw_buffer(polygon_interaction);
+
+                }
+            }
+        }
+
+
+
+
+        area_profiling_function = function(polygon_wkt) {
+            $.ajax({
+                type: "POST",
+                url: "",
+                data: "geometry=" + polygon_wkt + '&csrfmiddlewaretoken={{ csrf_token }}',
+                beforeSend: function() {
+                    display_processing();
+                },
+                success: function(data) {
+
+                    if (data.indexOf('single-property') != -1) {
+                        $('#property_search_results_1').html(data);
+                    } else {
+                        $('#property_search_results_2').html(data);
+                    }
+                    hide_processing();
+                },
+                error: function(xhr, textStatus, error) {
+                    hide_processing();
+                }
+            });
+
+        }
+
+
+
+
+
+        function draw_buffer(circle_interaction) {
+            var geom;
+            // circle_interaction.on('drawstart', function(evt) {
+            //     // clear_map_special();
+            //     sketch = evt.feature;
+            //     listener = sketch.getGeometry().on('change', function(evt) {
+            //         geom = evt.target;
+            //         var my_radius = geom.clone().transform('EPSG:4326', 'EPSG:3857').getRadius();
+            //         var the_distance = (Math.round(my_radius / 1000 * 100) / 100) + 'km';
+            //         tooltipCoord = geom.getLastCoordinate();
+            //         measureTooltipElement.innerHTML = the_distance;
+            //         measureTooltip.setPosition(tooltipCoord);
+            //     });
+            // });
+            circle_interaction.on('drawend', function(evt) {
+
+                var feature = evt.feature.getGeometry();
+                var feature_type = evt.feature.getGeometry().getType();
+                var parser = new ol.format.WKT();
+
+                if (feature_type == 'MultiPolygon' || feature_type == 'Polygon') {
+                    var featuresWKT = parser.writeGeometry(feature);
+                    console.log(featuresWKT);
+                    area_profiling_function(featuresWKT);
+
+                } else if (feature_type == 'Circle') {
+                    var my_circle = ol.geom.Polygon.fromCircle(feature, 128, 0);
+                    var featuresWKT = parser.writeGeometry(my_circle);
+                    console.log(featuresWKT);
+                    area_profiling_function(featuresWKT);
+                }
+
+            });
+        }
+
+
+
+
+
+        function removeInteractions() {
+            map.removeInteraction(dragZoom);
+            map.un('singleclick', query_feature);
+            map.un('singleclick', identify_onclick);
+            map.removeInteraction(polygon_interaction);
+            map.removeInteraction(circle_interaction);
+        }
+
+        function clear_map_vector() {
+            property_source.clear();
+        }
+
+
+    });
+
+    
+// attribute Query
+
+
+
+
+var qrybutton = document.getElementById('selectAttr')
+qrybutton.addEventListener("click",() =>{
+    document.getElementById("attQueryDiv").style.display = "block";
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/geoserver/Postgress/wms?service=WMS?",
+            dataType: "xml",
+            success: function(xml){
+                var select = $('#selectLayer');
+                console.log(xml)
+                select.append("<option class='ddindent' value=''></option>");
+                $(xml).find('FeatureType').each(function () {
+                    $(this).find('status').each(function () {
+                        var value = $(this).text();
+                        select.append("<option class='ddindent' value='' + value + ''>"+ value +"</option>")
+                    })
+                })
+        }})
+}
+)
+})
+
+
+
+
+// search 
+        // $('form').on('submit', function(event) {
+        //     event.preventDefault();
+        //     var id = $(this).attr('id');
+        //     console.log(id);
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "{% url 'farm-master-search' 'xxx' %}".replace('xxx', id),
+        //         data: $('#fm-street-address').serialize(),
+        //         beforeSend: function() {
+                    
+        //         },
+        //         success: function(data) {
+        //             if (data.indexOf('single-property') != -1) {
+        //                 $('#property_search_results_1').html(data);
+        //             } else {
+        //                 $('#property_search_results_2').html(data);
+        //             }
+                    
+        //         },
+        //         failure: function() {
+        //             hide_processing();
+        //         }
+        //     });
+        // });
+// new
+
+
+        
+
+
+
+// end attribute query 
+// clear map
+$('#clear-map').click(function() {
+    console.log("cleared")
+    clear_map_vector();
+});
+
+// end clear map
+
+// new scripts
+  // start area measurement
+
+  $("#types").click(function() {
+    console.log('clicked')
+    let draw
+    map.removeInteraction(draw);
+    addInteraction();
+});
+
+const showSegments = document.getElementById('segments');
+const clearPrevious = document.getElementById('clear');
+
+const style = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(255, 255, 255, 0.2)',
+  }),
+  stroke: new ol.style.Stroke({
+    color: 'rgba(0, 0, 0, 0.5)',
+    lineDash: [10, 10],
+    width: 2,
+  }),
+  
+});
+
+const labelStyle = new ol.style.Style({
+  text: new Text({
+    font: '14px Calibri,sans-serif',
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    backgroundFill: new ol.style.Fill({
+      color: 'rgba(0, 0, 0, 0.7)',
+    }),
+    padding: [3, 3, 3, 3],
+    textBaseline: 'bottom',
+    offsetY: -15,
+  }),
+  
+});
+
+const tipStyle = new ol.style.Style({
+  text: new Text({
+    font: '12px Calibri,sans-serif',
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    backgroundFill: new ol.style.Fill({
+      color: 'rgba(0, 0, 0, 0.4)',
+    }),
+    padding: [2, 2, 2, 2],
+    textAlign: 'left',
+    offsetX: 15,
+  }),
+});
+
+const modifyStyle = new ol.style.Style({
+  
+  text: new Text({
+    text: 'Drag to modify',
+    font: '12px Calibri,sans-serif',
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    backgroundFill: new ol.style.Fill({
+      color: 'rgba(0, 0, 0, 0.7)',
+    }),
+    padding: [2, 2, 2, 2],
+    textAlign: 'left',
+    offsetX: 15,
+  }),
+});
+
+const segmentStyle = new ol.style.Style({
+  text: new Text({
+    font: '12px Calibri,sans-serif',
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    backgroundFill: new ol.style.Fill({
+      color: 'rgba(0, 0, 0, 0.4)',
+    }),
+    padding: [2, 2, 2, 2],
+    textBaseline: 'bottom',
+    offsetY: -12,
+  }),
+  
+});
+
+const segmentStyles = [segmentStyle];
+
+const formatLength = function (line) {
+  const length = getLength(line);
+  let output;
+  if (length > 100) {
+    output = Math.round((length / 1000) * 100) / 100 + ' km';
+  } else {
+    output = Math.round(length * 100) / 100 + ' m';
+  }
+  return output;
+};
+
+
+
+
+
+const source =  new ol.source.Vector();
+
+const modifyy = new ol.interaction.Modify({source: source, style: modifyStyle});
+
+let tipPoint;
+
+function styleFunction(feature, segments, drawType, tip) {
+    const styles = [];
+    const geometry = feature.getGeometry();
+    const type = geometry.getType();
+    let point, label, line;
+    if (!drawType || drawType === type) {
+        if (type === 'Polygon') {
+        point = geometry.getInteriorPoint();
+        label = formatArea(geometry);
+        line = new LineString(geometry.getCoordinates()[0]);
+        } else if (type === 'LineString') {
+        point = new Point(geometry.getLastCoordinate());
+        label = formatLength(geometry);
+        line = geometry;
+        }
+    }
+    if (segments && line) {
+        let count = 0;
+        line.forEachSegment(function (a, b) {
+        const segment = new LineString([a, b]);
+        const label = formatLength(segment);
+        if (segmentStyles.length - 1 < count) {
+            segmentStyles.push(segmentStyle.clone());
+        }
+        const segmentPoint = new Point(segment.getCoordinateAt(0.5));
+        segmentStyles[count].setGeometry(segmentPoint);
+        segmentStyles[count].getText().setText(label);
+        styles.push(segmentStyles[count]);
+        count++;
+        });
+    }
+    if (label) {
+        labelStyle.setGeometry(point);
+        labelStyle.getText().setText(label);
+        styles.push(labelStyle);
+    }
+    if (
+        tip &&
+        type === 'Point' &&
+        !new ol.interaction.Modify({source: new ol.source.Vector(),
+            style: new ol.style.Style({
+ 
+  text: new ol.style.Text({
+    text: 'Drag to modify',
+    font: '12px Calibri,sans-serif',
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    backgroundFill: new ol.style.Fill({
+      color: 'rgba(0, 0, 0, 0.7)',
+    }),
+    padding: [2, 2, 2, 2],
+    textAlign: 'left',
+    offsetX: 15,
+  }),
+}).getOverlay().getSource().getFeatures().length})
+    ) {
+        tipPoint = geometry;
+        tipStyle.getText().setText(tip);
+        styles.push(tipStyle);
+    }
+    return styles;
+}
+
+const vector = new ol.layer.Vector({
+    source: new ol.source.Vector(),
+    style: function (feature) {
+        return styleFunction(feature, showSegments.checked);
+    },
+});
+
+
+
+
+
+function addInteraction() {
+    
+    const drawType = $("#types").val();
+    const activeTip =
+        'Click to continue drawing the ' +
+        (drawType === 'Polygon' ? 'polygon' : 'line');
+    const idleTip = 'Click to start measuring';
+    let tip = idleTip;
+    
+    draw = new ol.interaction.Draw({
+        source: new ol.source.Vector(),
+        type: drawType,
+        style: function (feature) {
+        return styleFunction(feature, showSegments.checked, drawType, tip);
+        },
+    });
+    draw.on('drawstart', function () {
+        if (clearPrevious.checked) {
+        // source.clear();
+        }
+        modifyy.setActive(false);
+        tip = activeTip;
+    });
+   
+    draw.on('drawend', function () {
+      
+        modifyStyle.setGeometry(tipPoint);
+        modifyy.setActive(true);
+        const feature = event.feature;
+
+        
+
+        
+
+        Source.addFeature(feature);
+        map.once('pointermove', function () {
+        modifyStyle.setGeometry();
+        });
+        tip = idleTip;
+    });
+    new ol.interaction.Modify({source: new ol.source.Vector()}).setActive(true);
+    map.addInteraction(draw);
+}
+
+
+
+
+
+
+// end area measurement
+
+// select by attribute button close
+
+// end select by attribute button close
+
+// popup function
+
+    
+// end popup function
+// processing
+hide_processing = function() {
+        $('#processing-panel').addClass('d-none')
+    }
+
+
+    display_processing = function() {
+        $('#processing-panel').removeClass('d-none');
+    }
+
+// end processing
+
+// start
+
+// end
+    
+</script>
+<script>
+    $("#closeQry").on("click", function(e){
+    console.log('hie')
+        property_source.clear();
+        document.getElementById("attQueryDiv").style.display = "none";
+    })
+
+    $("#closePopup").on("click", function(e){
+        document.getElementById('popUP').classList.add('popUP');
+    })
+
+    
+</script>
+
+
+{% endblock %} {% block scripts %} {% endblock %}
+
+<!-- <script>
+    $('#deed_number_value').select2({
+            ajax: {
+                url: "{% url 'deed-number-autocomp' %}",
+                dataType: "json",
+                type: "GET",
+                data: function(params) {
+                    var queryParameters = {
+                        q: params.term,
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    }
+                    return queryParameters;
+                },
+                processResults: function(data) {
+                    return {
+                        results: data
+                    };
+                }
+            },
+            placeholder: 'Select ...',
+            minimumInputLength: 1
+        });
+    
+
+    
+</script> -->

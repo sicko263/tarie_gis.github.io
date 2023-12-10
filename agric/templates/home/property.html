@@ -1,0 +1,57 @@
+{% load widget_tweaks %}
+
+<style>
+    .results-table{
+        /* display: inline-table; */
+        /* vertical-align: baseline; */
+        min-width: 200px;
+    }
+</style>
+<div id="single-property" style="display: none;"> Single Farm </div>
+<div class="card-body py-0 px-3">
+    <table class="table border-top-0 table-bordered">
+        <tbody>
+            <tr>
+                <td class="border-top-0 results-table fw-semibold"> Province: </td>
+                <td class="text-end border-top-0"> {{ property.province}} </td>
+            </tr>
+            <tr>
+                <td class="border-top-0 results-table fw-semibold" > District: </td>
+                <td class="text-end border-top-0"> {{ property.district }} </td>
+            </tr>
+            <tr>
+                <td class="border-top-0 results-table fw-semibold" >Area_km2: </td>
+                <td class="text-end border-top-0">{{ property.area_km2 }}</td>
+            </tr>
+            <tr>
+                <td class="border-top-0 results-table fw-semibold" > Area (Ha) </td>
+                <td class="text-end border-top-0"> {{ property.area_ha }} </td>
+            </tr>
+            <tr>
+                <td class="border-top-0 results-table fw-semibold" > Status </td>
+                <td class="text-end border-top-0"> {{ property.status }} </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+
+        var the_count = 1;
+
+        property_source.clear();
+        property_source.addFeatures((new ol.format.GeoJSON()).readFeatures('{{ geojson_data|safe }}'));
+        var layerExtent = property_source.getExtent();
+        var bufferedExtent = new ol.extent.buffer(layerExtent, 0.002);
+        map.getView().fit(bufferedExtent, {
+            duration: 2000
+        });
+
+        $(".ignore-click").click(function() {
+            return false;
+        })
+
+    });
+</script>

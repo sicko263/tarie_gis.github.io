@@ -1,0 +1,172 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+.main-container {
+  display: flex;
+  width: 100%;
+}
+.main-container .side-menu {
+  width: 15rem !important;
+  display: flex;
+  padding: 0 1rem;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100vh;
+  background: #f7f7f7;
+}
+.main-container .side-menu .menu-container {
+  margin-top: 2rem;
+}
+.main-container .side-menu .menu-container .bottom-container {
+  margin-top: 1rem;
+}
+.main-container .side-menu .menu-heading {
+  margin: 0;
+  font-family: "Inter";
+  font-weight: 500;
+  padding: 0;
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+.main-container .side-menu .nav-items {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+.main-container .side-menu .nav-items a {
+  text-decoration: none;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #1a1a1a;
+}
+
+.dashboard-container .wrapper {
+  width: 1100px;
+  margin: 2rem;
+}
+.dashboard-container .wrapper .top-indicators {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 80%;
+  padding: 0.5rem 2rem;
+  border-radius: 4px;
+  border: 1.2px solid #dedede;
+}
+.dashboard-container .wrapper .top-indicators .heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.dashboard-container .wrapper .top-indicators .indicator-wrapper {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.dashboard-container .wrapper .top-indicators .indicator-wrapper h3 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.dashboard-container .wrapper .top-indicators .indicator-wrapper .indi {
+  border-right: 1.2px solid #dedede;
+}
+.dashboard-container .wrapper .top-indicators .indicator-wrapper div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 3rem;
+}
+.dashboard-container .wrapper .top-indicators .indicator-wrapper p {
+  font-family: "Inter";
+  font-size: 0.9rem;
+  color: #4d4d4d;
+}
+.dashboard-container .wrapper .top-indicators .indicator-wrapper p,
+.dashboard-container .wrapper .top-indicators .indicator-wrapper h3 {
+  margin: 0;
+  padding: 0;
+}
+
+.display-province {
+  margin-top: 2rem;
+  padding-left: 2rem;
+}
+.display-province h3,
+.display-province .province-heading {
+  padding: 0;
+  margin: 0;
+  font-family: "Inter";
+}
+.display-province h3 {
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+.display-province .province-heading {
+  font-weight: 700;
+  font-size: 2rem;
+  padding-top: 0.5rem;
+}
+.display-province .tab-switcher-container {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.display-province .tab-switcher-container a {
+  text-decoration: none;
+  color: #1a1a1a;
+  text-transform: none;
+}
+
+th {
+  font-size: 0.9rem !important;
+  text-transform: none !important;
+}
+
+td {
+  font-size: 0.8rem;
+}
+
+.bottom-container {
+  border-top: 1.2px solid #dedede;
+  padding-top: 1rem;
+}
+
+.key-map {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: start;
+}
+.key-map div {
+  display: flex;
+  flex-direction: row !important;
+  gap: 0.5rem;
+  width: 15rem;
+}
+.key-map p {
+  font-size: 0.8rem !important;
+}
+.key-map span {
+  height: 0.8rem;
+  width: 0.8rem;
+  border-radius: 50%;
+}
+
+.negative-dot {
+  background: rgba(255, 70, 70, 0.769);
+}
+
+.positive-dot {
+  background: rgba(0, 151, 0, 0.939);
+}/*# sourceMappingURL=style.css.map */

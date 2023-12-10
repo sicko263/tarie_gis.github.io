@@ -1,0 +1,136 @@
+            {% load static %}
+			<style>
+				#country{
+					color: #82c035;
+				}
+			</style>
+                
+            <!--APP-SIDEBAR-->
+            <div class="sticky">
+                <div class="app-sidebar__overlay" data-bs-toggle="sidebar"></div>
+				<div class="app-sidebar">
+					<div class="side-header">
+						<h3 class="text-dark fw-semibold d-flex justify-content-center w-100"><span id="country">LIMS|</span>ZIMBABWE</h3>
+					</div>
+					
+					<div class="main-sidemenu">
+                        <div class="slide-left disabled" id="slide-left"><svg xmlns="http://www.w3.org/2000/svg"
+                                fill="#7b8191" width="24" height="24" viewBox="0 0 24 24">
+                                <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" />
+                            </svg>
+						</div>
+						<ul class="side-menu">
+							<li>
+								<h3>Dashboard</h3>
+							</li>
+							<li class="slide">
+								<a class="side-menu__item has-link" data-bs-toggle="slide" href="{% url 'dashboard' %}">
+									<i class="ti-bar-chart-alt" data-bs-toggle="tooltip" title="ti-bar-chart-alt">  </i>
+									<span class="side-menu__label m-1"> Dashboard</span>
+								</a>
+							</li>
+							<li>
+								<h3>Components</h3>
+							</li>
+							<li class="slide">
+								<a class="side-menu__item has-link" data-bs-toggle="slide" href="{% url 'datatable'%}">
+									<i class="icon icon-lock" data-bs-toggle="tooltip" title="icon-lock"></i>
+									<span class="side-menu__label m-1"> Acquisition</span>
+								</a>
+							</li>
+							<li>
+								<li class="slide">
+									<a class="side-menu__item has-link" data-bs-toggle="slide" href="{% url 'planning' %}">
+										<i class="icon icon-organization" data-bs-toggle="tooltip" title="icon-organization"></i>
+										<span class="side-menu__label m-1"> Planning</span>
+									</a>
+								</li>
+							<li>
+							
+							<li class="slide">
+								<a class="side-menu__item" data-bs-toggle="slide" href="#">
+									<i class="icon icon-puzzle" data-bs-toggle="tooltip" title="icon-puzzle"></i>
+									<span class="side-menu__label m-1">Resettlement</span><i class="angle fa fa-angle-right"></i></a>
+								<ul class="slide-menu">
+									<li class="side-menu-label1"><a href="">Subdivisions</a></li>
+									<li><a href="{% url 'subdivisions' %}" class="slide-item">Subdivision</a></li>
+									<li><a href="{% url 'beneficiaries' %}" class="slide-item">Beneficiaries</a></li>
+									<li><a href="{% url 'farm_allocation' %}" class="slide-item">Farm Allocation</a></li>
+									
+								</ul>
+							</li>
+							<li class="slide">
+								<a class="side-menu__item" data-bs-toggle="slide" href="{% url 'map_dash' %}" target="_blank">
+									<i class="ti-map" data-bs-toggle="tooltip" title="ti-map"></i>
+									<span class="side-menu__label m-1">GIS And MAps</span>
+									
+								</a>
+							</li>
+							<li class="slide">
+								<a class="side-menu__item" data-bs-toggle="slide" href="#">
+									<i class="ti-book" data-bs-toggle="tooltip" title="ti-book"></i>
+									<span class="side-menu__label m-1">Estates</span><i class="angle fa fa-angle-right"></i></a>
+								<ul class="slide-menu">
+									<li class="side-menu-label1"><a href="javascript:void(0)">Charts</a></li>
+									<li><a href="#" class="slide-item"> Lease Register</a></li>
+									<li><a href="#" class="slide-item">Farm Succession</a></li>
+									<li><a href="#" class="slide-item"> Applications</a></li>
+									
+								</ul>
+							</li>
+							<li class="slide">
+								<a class="side-menu__item" data-bs-toggle="slide" href="#" target="_blank">
+									<i class="ti-write" data-bs-toggle="tooltip" title="ti-write"></i>
+									<span class="side-menu__label m-1">Valuation</span>
+									
+								</a>
+							</li>
+							<li class="slide">
+								<a class="side-menu__item" data-bs-toggle="slide" href="#" target="_blank">
+									<i class="ti-credit-card" data-bs-toggle="tooltip" title="ti-credit-card"></i>
+									<span class="side-menu__label m-1">Finance and Admin</span>
+									
+								</a>
+							</li>
+							<li class="slide">
+								<a class="side-menu__item" data-bs-toggle="slide" href="#">
+									<i class="ti-briefcase" data-bs-toggle="tooltip" title="ti-briefcase"></i>
+									<span class="side-menu__label m-1">Case Management</span><i class="angle fa fa-angle-right"></i></a>
+								<ul class="slide-menu">
+									<li class="side-menu-label1"><a href="javascript:void(0)">Maps</a></li>
+									<li><a href="#" class="slide-item">My Tasks</a></li>
+									
+								</ul>
+							</li>
+							<li class="slide">
+								<a class="side-menu__item" data-bs-toggle="slide" href="#" target="_blank">
+									<i class="ti-files" data-bs-toggle="tooltip" title="ti-files"></i>
+									<span class="side-menu__label m-1">Documents</span>
+									
+								</a>
+							</li>
+							
+							<li>
+								<h3>Settings</h3>
+							</li>
+							
+
+							
+							<li class="slide">
+								<a class="side-menu__item" data-bs-toggle="slide" href="#" target="_blank">
+									<i class="ti-settings" data-bs-toggle="tooltip" title="ti-settings"></i>
+									<span class="side-menu__label m-1">Settings</span>
+									
+								</a>
+							</li>
+							
+						</ul>
+						<div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
+								width="24" height="24" viewBox="0 0 24 24">
+								<path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z" />
+							</svg>
+						</div>
+					</div>
+				</div>
+            </div>
+			<!--/APP-SIDEBAR-->

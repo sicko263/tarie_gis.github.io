@@ -1,0 +1,291 @@
+@charset "UTF-8";
+/**
+ * @license
+ *
+ * Font Family: Satoshi
+ * Designed by: Deni Anggara
+ * URL: https://www.fontshare.com/fonts/satoshi
+ * © 2023 Indian Type Foundry
+ *
+ * Font Styles:
+ * Satoshi Variable(Variable font)
+ * Satoshi Variable Italic(Variable font)
+ * Satoshi Light
+ * Satoshi Light Italic
+ * Satoshi Regular
+ * Satoshi Italic
+ * Satoshi Medium
+ * Satoshi Medium Italic
+ * Satoshi Bold
+ * Satoshi Bold Italic
+ * Satoshi Black
+ * Satoshi Black Italic
+ *
+*/
+/**
+* This is a variable font
+* You can controll variable axes as shown below:
+* font-variation-settings: 'wght' 900.0;
+*
+* available axes:
+
+* 'wght' (range from 300.0 to 900.0)
+
+*/
+@font-face {
+  font-family: "Satoshi-Variable";
+  src: url("../fonts/Satoshi-Variable.woff2") format("woff2"), url("../fonts/Satoshi-Variable.woff") format("woff"), url("../fonts/Satoshi-Variable.ttf") format("truetype");
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: normal;
+}
+/**
+* This is a variable font
+* You can controll variable axes as shown below:
+* font-variation-settings: 'wght' 900.0;
+*
+* available axes:
+
+* 'wght' (range from 300.0 to 900.0)
+
+*/
+@font-face {
+  font-family: "Satoshi-VariableItalic";
+  src: url("../fonts/Satoshi-VariableItalic.woff2") format("woff2"), url("../fonts/Satoshi-VariableItalic.woff") format("woff"), url("../fonts/Satoshi-VariableItalic.ttf") format("truetype");
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi-Light";
+  src: url("../fonts/Satoshi-Light.woff2") format("woff2"), url("../fonts/Satoshi-Light.woff") format("woff"), url("../fonts/Satoshi-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi-LightItalic";
+  src: url("../fonts/Satoshi-LightItalic.woff2") format("woff2"), url("../fonts/Satoshi-LightItalic.woff") format("woff"), url("../fonts/Satoshi-LightItalic.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi-Regular";
+  src: url("../fonts/Satoshi-Regular.woff2") format("woff2"), url("../fonts/Satoshi-Regular.woff") format("woff"), url("../fonts/Satoshi-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi-Italic";
+  src: url("../fonts/Satoshi-Italic.woff2") format("woff2"), url("../fonts/Satoshi-Italic.woff") format("woff"), url("../fonts/Satoshi-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi-Medium";
+  src: url("../fonts/Satoshi-Medium.woff2") format("woff2"), url("../fonts/Satoshi-Medium.woff") format("woff"), url("../fonts/Satoshi-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi-MediumItalic";
+  src: url("../fonts/Satoshi-MediumItalic.woff2") format("woff2"), url("../fonts/Satoshi-MediumItalic.woff") format("woff"), url("../fonts/Satoshi-MediumItalic.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi-Bold";
+  src: url("../fonts/Satoshi-Bold.woff2") format("woff2"), url("../fonts/Satoshi-Bold.woff") format("woff"), url("../fonts/Satoshi-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi-BoldItalic";
+  src: url("../fonts/Satoshi-BoldItalic.woff2") format("woff2"), url("../fonts/Satoshi-BoldItalic.woff") format("woff"), url("../fonts/Satoshi-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi-Black";
+  src: url("../fonts/Satoshi-Black.woff2") format("woff2"), url("../fonts/Satoshi-Black.woff") format("woff"), url("../fonts/Satoshi-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi-BlackItalic";
+  src: url("../fonts/Satoshi-Black.woff2") format("woff2"), url("../fonts/Satoshi-BlackItalic.woff") format("woff"), url("../fonts/Satoshi-BlackItalic.ttf") format("truetype");
+  font-weight: 900;
+  font-display: swap;
+  font-style: italic;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  font-family: "Satoshi-Medium";
+}
+body nav {
+  background: rgba(238, 238, 238, 0.9333333333);
+  padding-top: 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Satoshi-Regular";
+}
+body main {
+  margin-top: 2rem;
+}
+body .wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+body .wrapper .serial-number {
+  justify-content: end;
+  align-items: center;
+}
+body .wrapper .content-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+body .wrapper .content-wrapper .main-heading {
+  font-family: "Satoshi-Bold";
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2rem;
+  margin: auto;
+  width: 60%;
+}
+body .wrapper .content-wrapper .form-logo {
+  height: 10rem;
+  margin: auto;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 1rem;
+}
+body .wrapper .content-wrapper .subheading {
+  text-align: center;
+  margin: auto;
+  text-transform: uppercase;
+  font-family: "Satoshi-Bold";
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+body .wrapper .content-wrapper .chapt-description {
+  text-align: center;
+  margin: auto;
+  font-size: 1rem;
+  font-family: "Satoshi-Medium";
+  padding-top: 0.5rem;
+}
+body .wrapper .content-wrapper .purpose {
+  display: flex;
+  height: 2rem;
+  gap: 1rem;
+  margin: auto;
+  margin-top: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+body .wrapper .content-wrapper .purpose .display {
+  margin-top: 1.2rem;
+}
+body .wrapper .content-wrapper .purpose > p {
+  height: 2rem;
+}
+body .wrapper .content-wrapper .owner-agent-details {
+  margin-top: 2rem !important;
+  display: flex;
+  align-items: start;
+  width: 90%;
+  margin: auto;
+  justify-content: space-between;
+}
+body .wrapper .content-wrapper .owner-agent-details .agent, body .wrapper .content-wrapper .owner-agent-details .date {
+  display: flex;
+  gap: 1rem;
+}
+body .wrapper .content-wrapper .owner-agent-details .date {
+  align-items: center;
+}
+body .wrapper .content-wrapper .owner-agent-details .date .t-day {
+  margin-top: 0rem;
+}
+body .wrapper .content-wrapper .land-description {
+  width: 90%;
+  margin: auto;
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+body .wrapper .content-wrapper .land-description .description-para {
+  margin-top: 0;
+}
+
+span {
+  font-family: "Satoshi-Bold";
+}
+
+.serial-number {
+  margin-right: 5%;
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  gap: 2rem;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.serial-number p {
+  font-family: "Satoshi-Bold";
+  position: relative;
+  top: 50%;
+  margin-top: 0.5rem;
+  transform: translateY(-50%);
+}
+
+.serial-table {
+  border: 1px solid #1a1a1a;
+}
+.serial-table td {
+  padding: 0rem 0.5rem;
+}
+.serial-table .pre-serial {
+  padding-right: 0.5rem;
+  border-right: 1px solid #1a1a1a;
+}
+
+.para1 {
+  width: 90%;
+  margin: auto;
+  margin-top: 2rem;
+  padding-bottom: 3rem;
+}
+.para1 .signatory {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+}
+.para1 .signatory .department {
+  margin-top: -1rem;
+}
+.para1 .signatory p {
+  font-family: "Satoshi-Bold";
+}/*# sourceMappingURL=CONPI-certificate.css.map */

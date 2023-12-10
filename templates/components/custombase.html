@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  
+
+
+
+  
+
+
+  <!-- Favicons -->
+  <link rel="stylesheet" href="node_modules/ol/ol.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets/style.css' %}" rel="stylesheet">
+
+
+
+
+    <link rel="icon" type="image/png" href="{% static 'assets/nav/images/icons/coat_of_arms.png' %}"/>
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/nav/vendor/bootstrap/css/bootstrap.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/nav/fonts/fontawesome-5.0.8/css/fontawesome-all.min.css' %}">
+
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/nav/fonts/iconic/css/material-design-iconic-font.min.css' %}">
+
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/animate.css' %}">
+	
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/hamburgers.min.css' %}">	
+	
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/nav/vendor/animsition/css/animsition.min.css' %}">	
+
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/util.min.css' %}">	
+	
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/main.css' %}">	
+
+    {% include 'components/custom-styles.html' %}
+    {% block styles %}
+    {% include 'components/custom-styles.html' %}
+    {% endblock %}
+
+    <style>
+
+    </style>
+
+</head>
+
+<body>
+
+    {% include 'components/custom-switcher.html' %}
+
+    
+    {% include 'components/custom-scripts.html' %}
+
+
+    
+  <!-- ======= Top Bar ======= -->
+ 
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="d-flex align-items-center">
+    
+    <div class="container d-flex align-items-center">
+    
+      <!--h1 class="logo me-auto"><a href="index.html">eCadastre</a></h1>-->
+      <!-- Uncomment below if you prefer to use an image logo -->
+      
+
+      
+  </header>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  {% block content %}{% endblock %}
+ 
+
+  </body>
+</html>
